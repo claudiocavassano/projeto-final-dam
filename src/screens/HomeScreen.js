@@ -60,12 +60,17 @@ export default function HomeScreen({ navigation }) {
     }
   }
 
+ function handleEditar(objeto) {
+    navigation.navigate("Formulario", { objeto });
+  }
+
   function renderObjeto({ item }) {
     return (
       <ObjetoCard
         objeto={item}
         user={user}
         onExcluir={handleExcluir}
+        onEditar={handleEditar}
       />
     );
   }

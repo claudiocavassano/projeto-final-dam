@@ -5,6 +5,9 @@ import {
   onSnapshot,
   query,
   orderBy,
+  addDoc,
+  updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -20,7 +23,6 @@ export function listarObjetos(callback, callbackErro) {
         id: documento.id,
         ...documento.data(),
       }));
-
       callback(objetos);
     },
     (erro) => {
@@ -35,10 +37,20 @@ export function listarObjetos(callback, callbackErro) {
   return cancelarEscuta;
 }
 
-export async function excluirObjeto(id) {
-  if (!id) {
-    throw new Error("O id do objeto é obrigatório para excluir.");
-  }
+export async function criarObjeto(dados) {
+  await addDoc(objetosRef, {
+    ...dados,
+    status: "ativo",
+    criadoEm: serverTimestamp(),
+  });
+}
 
+export async function editarObjeto(id, dados) {
+  if (!id) throw new Error("O id é obrigatório para editar.");
+  await updateDoc(doc(db, "objetos", id), dados);
+}
+
+export async function excluirObjeto(id) {
+  if (!id) throw new Error("O id é obrigatório para excluir.");
   await deleteDoc(doc(db, "objetos", id));
 }
